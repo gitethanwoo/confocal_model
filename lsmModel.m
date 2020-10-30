@@ -260,8 +260,10 @@ end
 
 FOMS = 1 - abs(1-mean(unmixedB,2))
 
+%% 
 
+ 
 
-%%%
+            
 
 
