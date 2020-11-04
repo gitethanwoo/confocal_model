@@ -11,51 +11,57 @@
 % %I first downloaded a 488/561/647 MBS excel sheet from ? (long time ago)
 % Filter
 
-filterSpectra = readmatrix('assets/MBSZeiss.csv'); %import filter spectra into matrix
+filters = readmatrix('assets/MBSZeiss.csv'); %import filter spectra into matrix
+
+
+
+% prompt = ["How many lasers are available to you?"; "How many dyes in the sample?"];
+%     
+% answer = inputdlg(prompt);
+% 
+% dlgtitle = "Optimize Acquisition Scheme"
+% prompt = ["Lambda min [nm]: " ; "Lambda max [nm]:" ; "Lambda steps[nm]:"; ...
+%             "Number of Excitations:" ; "Number of Channels:" ; ...
+%             "Laser intensity steps [%]: "];
+% answer2 = inputdlg(prompt);
 
 %VISUAL:
-scatter(filterSpectra(:,1), filterSpectra(:,2)) 
+scatter(filters(:,1), filters(:,2)) 
 title("488/561/647 Main Beam Splitter: Transmittance")
 ylim([0 1])
 % Lasers
 %let's generate these lasers:
 
-wavelengths = [488 561 633]; %What lasers do we want to use?
-
+wavelengths = [488 561 633 405]; %What lasers do we want to use?
 
 lasers = makeLaser(wavelengths); %this function can found as "makeLaser.m" in functions
 
 %what do the lasers look like?
 %488 laser looks like:
-plot(lasers(:,1,1),lasers(:,2,1))
-title('488 Laser, Zoomed in')
-
-
-plot(lasers(:,1,1),lasers(:,2,1)) %this is the same laser as before
-xlim([300 700])                    %just changed the x-range to zoom out.
-title('488 laser, Zoomed out')
+% % % plot(lasers(:,1,1),lasers(:,2,1))
+% % % title('488 Laser, Zoomed in')
+% % % 
+% % % 
+% % % plot(lasers(:,1,1),lasers(:,2,1)) %this is the same laser as before
+% % % xlim([300 700])                    %just changed the x-range to zoom out.
+% % % title('488 laser, Zoomed out')
 % Detector
 %The detector is just modeled as a 34 channel, 9.8nm wide array. This will
 %become more clear later.
 
-detector = 400:9.8:733.2;
+detector = 414:9.8:725.2;
 
-%here, 400 is the beginning of channel 1, and 733.2 is the end of channel
-%34
+%here, 414 is the beginning of channel 1, and 725.2
 
 % Fluorophores
 %let's iterate through assets and collect our fluorophores
+fluors = importfluors();
 
-d = dir("assets/Alexa*"); %this pulls all the filenames with "alexa" into a struct
-
-fluors = struct;% I'm going to put my fluorophores in a structure
-
-for k = 1:length(d)                            %iterate through all the alexa fluors I have
-    fluors(k).('name') = d(k).name;             %store their name in a structure
-    fluors(k).('Spectra') = readmatrix(['assets/' d(k).name]); %then store their spectra in the stucture
-end
-
-fluors
+% [index, tf] = listdlg('PromptString', {'Select which dyes you will use.' ...
+%     'Use command to select multiple.'}, ... 
+%     'ListString', fluors.name, 'SelectionMode', 'multiple');
+% 
+% fluorsSelect = fluors(index)
 
 
 % % % All our components are collected. 
@@ -65,13 +71,18 @@ fluors
 %the lasers are defined at a 0.1 nm resolution. To fit them to our
 %detector and fluors, we have to downsample them to a 0.2nm resolution.
 
-fitRange = (400:0.2:733.2)'; %this is our wavelength range for everything to fit to
+fitRange = (414:0.2:725.2)'; %this is our wavelength range for everything to fit to
 
-fitLasers = zeros(1667, 3); %Array creation
+%fitting everything
+[fitLasers, fitfilterSpectra, fluors] = fitassets(fitRange, lasers, fluors, filters);
+% 
+%% 
 
-for k = 1:size(lasers,3)
-    fitLasers(:,k) = domainfit(lasers(:,:,k),fitRange); %this uses the function domainfit
-end %basically all the lasers are fit to our target domain using interpolation
+% fitLasers = zeros(length(fitRange), 3); %Array creation
+
+% for k = 1:size(lasers,3)
+%     fitLasers(:,k) = domainfit(lasers(:,:,k),fitRange); %this uses the function domainfit
+% end %basically all the lasers are fit to our target domain using interpolation
 
 %Now the 3 lasers are formatted to one another, we can simply add them
 %together:
@@ -92,12 +103,12 @@ s = figure;
 hold on %just graphing stuff
 
 for k = 1:length(fluors) %This loop will interpolate and extrapolate on the fluorophore spectra, fitting it to our range
-    fluors(k).('ex') = domainfit(fluors(k).Spectra(:,[1 2]),fitRange); %excitation side
-    fluors(k).('em') = domainfit(fluors(k).Spectra(:,[1 3]),fitRange); %emission side
     plot(fitRange, fluors(k).ex,'--','DisplayName', displayNameEx(k))
     plot(fitRange, fluors(k).em, 'DisplayName', displayNameEm(k))
 end
-fluors
+
+
+% fluors
 
 legend('location', 'southwest','NumColumns',3) %more graphing stuff
 title("All Fluorophores combined")
@@ -105,10 +116,10 @@ ylabel("Intensity")
 xlabel("Wavelength")
 % Splendid. Lastly, we have to format our filter to the same range.
 %first we have to clean up the filterSpectra
-[c, ia, ic] = unique(filterSpectra(:,1)); %this just removes duplicate values in the filter spectrum
-filterSpectraClean = filterSpectra(ia,:); %this stores those clean values in a variable
-
-fitfilterSpectra = domainfit(filterSpectraClean,fitRange);
+% [c, ia, ic] = unique(filterSpectra(:,1)); %this just removes duplicate values in the filter spectrum
+% filterSpectraClean = filterSpectra(ia,:); %this stores those clean values in a variable
+% 
+% fitfilterSpectra = domainfit(filterSpectraClean,fitRange);
 figure
 plot(fitRange, fitfilterSpectra)
 title("Filter Spectra, 488/561/647")
@@ -190,7 +201,7 @@ hold off
 % % As a result of spectral imaging, we will obtain the following:
 
 %here's where we actually spectrally image the postFilterSpectra.
-channelVal = zeros(34,1);
+channelVal = zeros(32,1);
 i = 1;
 for k = 1:49:(length(fitRange)-49) %I'm iterating through the wavelength domain. 0.2nm resolution, 9.8nm distance = 49
     channelVal(i) = trapz(postFilterSpectra(k:k+49)); %this takes the integral of this bandwidth as a psuedo photon number
@@ -201,7 +212,7 @@ plot(rescale(channelVal))
 %what do our fluourophore standards look like, when each imaged with the
 %same settings?
 
-fluorStandard = zeros(3,34);
+fluorStandard = zeros(3,32);
 i = 1;
 
 
@@ -242,7 +253,7 @@ title("Noisy, combined spectra. 100 Trials");
 
 Bfiltered = B.*fitfilterSpectra;
 %Now we can spectrally sample, and linearly unmix each one:
-sampledB = zeros(34, 1000);
+sampledB = zeros(32, 1000);
 unmixedB = zeros(3, 1000);
 
 %% The following loop is probably the most complicated in the program. 
@@ -258,7 +269,9 @@ for k = 1:size(B,2) %this iterates through our Large matrix of the noisy, combin
     unmixedB(:,k) = lsqnonneg(fluorStandard', sampledB(:,k)); %this unmixes every thing
 end
 
-FOMS = 1 - abs(1-mean(unmixedB,2))
+FOMS = 1 - abs(1-mean(unmixedB,2));
+
+disp("FOM = " + FOMS)
 
 %% 
 
