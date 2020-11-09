@@ -1,4 +1,4 @@
-function [fitLasers, filters, fluors] = fitassets(fitRange, lasers, fluors, filters)
+function [fitLasers, fitfilterSpectra, fluors] = fitassets(fitRange, lasers, fluors, filters)
 %fitassets this does all of the fitting in a single function.
 
 %   we fit the filters, lasers, and fluorophores using interpolation. Some
@@ -18,10 +18,14 @@ end
 
 %filters
 for k = 1:length(filters) %fluorophores
-    [~, ia, ~] = unique(filters(k).Spectra(:,1)); %this just removes duplicate values in the filter spectrum
-    clean = filters(k).Spectra(ia,:);
-    filters(k).('fitSpectra') = domainfit(clean,fitRange); %excitation filter
+    filters(k).('ex') = domainfit(fluors(k).Spectra(:,[1 2]),fitRange); %excitation filter
+    filters(k).('
 end
+
+[~, ia, ~] = unique(filters(:,1)); %this just removes duplicate values in the filter spectrum
+filterSpectraClean = filters(ia,:); %this stores those clean values in a variable
+
+fitfilterSpectra = domainfit(filterSpectraClean,fitRange);
 
 
 end
