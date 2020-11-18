@@ -1,6 +1,7 @@
 %short model
 
 
+%[indx,tf] = chooseOptions();
 
 detector = importdetector();
 
@@ -12,9 +13,6 @@ lasers = makeLaser(wavelengths); %creates the lasers
 
 %fluors = importfluors(); %imports the fluorophores
 fluors = importfluors2();
-
-
-[indx,tf] = chooseOptions(fluors,filters);
 
 fitRange = (414:0.2:725.2)'; %this is our wavelength range for everything to fit to
 
