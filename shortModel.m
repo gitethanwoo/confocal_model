@@ -1,5 +1,8 @@
 %short model
 
+
+%[indx,tf] = chooseOptions();
+
 detector = importdetector();
 
 filters = importfilters(); %import filter spectra into matrix
