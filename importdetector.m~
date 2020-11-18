@@ -1,0 +1,16 @@
+function [detector] = importdetector()
+%importdetector Imports the detector PMT response curve (Hamamatsu)
+%   
+
+detector = readmatrix('assets/detectorQE.csv');
+detector(:,2) = detector(:,2)/100
+
+[B,I] = sort(detector(:,1))
+
+detector [B detector(I,2)]
+
+
+
+
+end
+

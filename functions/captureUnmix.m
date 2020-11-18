@@ -1,11 +1,11 @@
-function FOMS = captureUnmix(fluorStandard, fluorsCombined, fitfilterSpectra, fitRange)
+function FOMS = captureUnmix(fluorStandard, fluorsCombined, fitfilterSpectra, fitRange, detector)
 %captureUnmix9 Adds poisson noise to 1000 trials, unmixes all of them and
 %stores FOMS for each fluorophore
 
 
 B = repmat(fluorsCombined,1, 1000); %this is a step to basically make our combinedFluorophore spectrum into a really big image
 B = imnoise(B*1e-12, 'poisson')*1e12; %this function then applies poisson noise to the entire image
-Bfiltered = B.*fitfilterSpectra;
+Bfiltered = B.*fitfilterSpectra.*detector;
 sampledB = zeros(32, 1000);
 unmixedB = zeros(3, 1000);
 

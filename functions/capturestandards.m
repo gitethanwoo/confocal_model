@@ -1,6 +1,6 @@
-function [fluors, fluorStandard, channelVal, fluorsCombined] =  captureimage(fluors, fitfilterSpectra, fitRange,scaledBright)
+function [fluors, fluorStandard, channelVal, fluorsCombined] =  capturestandards(fluors, fitfilterSpectra, fitRange,scaledBright, detector)
 
-%captureimage Uses laser and fluorophore information to capture our pure,
+%capturestandards Uses laser and fluorophore information to capture our pure,
 %fluorophore standards
 
 fluorsCombined = sum(scaledBright.*[fluors.em],2); %this is just combining all fluors into the same pixel
@@ -13,9 +13,10 @@ i = 1;
 
 %this loop calculates what the emission spectra will look like after
 %passing through the filters
+%we also account for detector quantum efficiency
 
 for k = 1:length(fluors)
-    fluors(k).('postfilter') = fluors(k).em.*fitfilterSpectra;
+    fluors(k).('postfilter') = fluors(k).em.*fitfilterSpectra.*detector;
 end
 
 
