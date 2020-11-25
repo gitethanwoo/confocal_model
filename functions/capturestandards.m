@@ -8,7 +8,7 @@ fluorsCombined = sum(scaledBright.*[fluors.em],2); %this is just combining all f
 postFilterSpectra = fitfilterSpectra.*fluorsCombined; %this is what the spectra look like when passed through the filter
 
 %just initiating
-fluorStandard = zeros(3,32);
+fluorStandard = zeros(size(fluors,1),32);
 i = 1;
 
 %this loop calculates what the emission spectra will look like after

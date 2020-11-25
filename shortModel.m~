@@ -14,19 +14,17 @@ lasers = makeLaser(wavelengths); %creates the lasers
 fluors = importfluors2();
 
 
-[indx, indx2, fitRange] = chooseOptions(fluors,filters);
+[indx,tf, indx2, tf2] = chooseOptions(fluors,filters);
 fluors = fluors(indx);
 filters = filters(indx2);
 
-
-
-%fitRange = (414:0.2:725.2)'; %this is our wavelength range for everything to fit to
+fitRange = (414:0.2:725.2)'; %this is our wavelength range for everything to fit to
 
 %the following function fits all the assets to our domain
 [fitLasers, filters, fluors, detector] = fitassets(fitRange, lasers, fluors, filters, detector);
 
 %%%% Change laser intensity to see how FOM changes
-laserIntensity = [.2 0.4 1]; % this is the controllable laser intensity (0-100%)
+laserIntensity = [.1 0.1 1]; % this is the controllable laser intensity (0-100%)
 %%%%
 
 %Which filter?
@@ -49,7 +47,6 @@ FOMS = captureUnmix(fluorStandard, fluorsCombined, filters.fitSpectra, fitRange,
 
 
 %the following lines just plot the FOM in a bar graph
-X = categorical({fluors.name});
+X = categorical({'488 FOM','568 FOM','647 FOM'});
 bar(X,FOMS)
-ylabel('FOM')
 

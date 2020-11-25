@@ -12,8 +12,8 @@ for k = 1:size(lasers,3) %lasers
 end %basically all the lasers are fit to our target domain using interpolation
 
 for k = 1:length(fluors) %fluorophores
-    fluors(k).('ex') = domainfit(fluors(k).Spectra(:,[1 2]),fitRange); %excitation side
-    fluors(k).('em') = domainfit(fluors(k).Spectra(:,[1 3]),fitRange); %emission side
+    fluors(k).('ex') = domainfit(fluors(k).Spectra(:,[1 3]),fitRange); %excitation side
+    fluors(k).('em') = domainfit(fluors(k).Spectra(:,[1 2]),fitRange); %emission side
 end
 
 %filters
