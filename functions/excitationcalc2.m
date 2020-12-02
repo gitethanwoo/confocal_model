@@ -1,16 +1,18 @@
-function [scaledBright] = excitationcalc2(fitLasers, laserIntensity, fluors)
+function [scaledBright] = excitationcalc2(lasers, fluors)
 %excitationcalc2 uses lasers and laser power to calculate the relative
 %brightness of the fluorophores
 
 
-defaultPower = [25 20 5]; % these are the laser powers in mW %Zeiss
+%defaultPower = [25 20 5]; % these are the laser powers in mW %Zeiss
 
-exFactor = zeros(1,3); %array creation
+exFactor = zeros(1,3); %array creatione
 
-laserPowers = laserIntensity.*defaultPower; %this is the power of the incident lasers
+for k = 1:length(lasers) %this loop scales the fit lasers according to their selected power
+    scaledlasers(:,k) = lasers(k).fitSpectra.*lasers(k).intensity.*lasers(k).power;
+end
 
-C = bsxfun(@times, fitLasers, laserPowers); %this scales each laser spectra by the laser power 
-lasersCombined = sum(C,2); %this adds all the lasers together
+%C = bsxfun(@times, lasers.fitSpectra, laserPowers); %this scales each laser spectra by the laser power 
+lasersCombined = sum(scaledlasers,2); %this adds all the lasers together
 
 
 %for each fluorophore on its own - HOW does it interact with ALL of the

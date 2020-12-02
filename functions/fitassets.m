@@ -1,14 +1,14 @@
-function [fitLasers, filters, fluors, detector] = fitassets(fitRange, lasers, fluors, filters, detector)
+function [lasers, filters, fluors, detector] = fitassets(fitRange, lasers, fluors, filters, detector)
 %fitassets this does all of the fitting in a single function.
 
 %   we fit the filters, lasers, and fluorophores using interpolation. Some
 %   cleaning is necessary on the filter spectra, for whatever reason
 
-fitLasers = zeros(length(fitRange), size(lasers,3)); %Array creation
+%fitLasers = zeros(length(fitRange), size(lasers,3)); %Array creation
 
 
-for k = 1:size(lasers,3) %lasers
-    fitLasers(:,k) = domainfit(lasers(:,:,k),fitRange); %this uses the function domainfit
+for k = 1:size(lasers,2) %lasers
+    lasers(k).('fitSpectra') = domainfit(lasers(k).spectra,fitRange); %this uses the function domainfit
 end %basically all the lasers are fit to our target domain using interpolation
 
 for k = 1:length(fluors) %fluorophores

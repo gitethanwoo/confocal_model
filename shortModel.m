@@ -1,39 +1,38 @@
 %short model
 
 
-
+%% import %%
 detector = importdetector();
 
 filters = importfilters(); %import filter spectra into matrix
 
-wavelengths = [488 561 633]; %What lasers do we want to use?
+%wavelengths = [488 561 633]; %What lasers do we want to use?
 
-lasers = makeLaser(wavelengths); %creates the lasers
+lasers = importlasers(); %creates the lasers
 
-%fluors = importfluors(); %imports the fluorophores
 fluors = importfluors2();
 
 
-[indx, indx2, fitRange] = chooseOptions(fluors,filters);
-fluors = fluors(indx);
-filters = filters(indx2);
+[fluors, filters,lasers, fitRange] = chooseOptions(fluors,filters, lasers);
+% fluors = fluors(indx);
+% filters = filters(indx2);
 
-
-
+%%
+%% 
 %fitRange = (414:0.2:725.2)'; %this is our wavelength range for everything to fit to
 
 %the following function fits all the assets to our domain
-[fitLasers, filters, fluors, detector] = fitassets(fitRange, lasers, fluors, filters, detector);
+[lasers, filters, fluors, detector] = fitassets(fitRange, lasers, fluors, filters, detector);
 
 %%%% Change laser intensity to see how FOM changes
-laserIntensity = [.2 0.4 1]; % this is the controllable laser intensity (0-100%)
+%laserIntensity = [.2 0.3 1]; % this is the controllable laser intensity (0-100%)
 %%%%
 
 %Which filter?
 
-whichfilter = ['MBS'];
+%whichfilter = ['MBS'];
 
-[scaledBright] = excitationcalc2(fitLasers, laserIntensity, fluors);
+[scaledBright] = excitationcalc2(lasers, fluors);
 
 %the following function will use the fluorophore spectra and laser
 %information to capture images of our fluorophore standards.
@@ -52,4 +51,4 @@ FOMS = captureUnmix(fluorStandard, fluorsCombined, filters.fitSpectra, fitRange,
 X = categorical({fluors.name});
 bar(X,FOMS)
 ylabel('FOM')
-
+title('FOMs of fluorophores in this experiment')
