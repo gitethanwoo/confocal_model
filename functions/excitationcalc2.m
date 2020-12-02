@@ -19,7 +19,8 @@ lasersCombined = sum(scaledlasers,2); %this adds all the lasers together
 %lasers?
 %adding 
 for k = 1:length(fluors) %this loop tells us, "How much is this fluorophore excited by the lasers?"
-    exFactor(k) = sum(fluors(k).ex.*lasersCombined); % This multiplies the lasers by each spectra
+    fluors(k).('overlap') = sum(fluors(k).ex.*lasersCombined);
+    exFactor(k) = fluors(k).overlap.*fluors(k).EC.*fluors(k).QY.*1e-4;% This multiplies the lasers by each spectra
 end
 
 %This previous loop accomplishes two things: 1. it calculates overlap of
