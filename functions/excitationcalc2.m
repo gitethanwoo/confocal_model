@@ -5,7 +5,7 @@ function [scaledBright] = excitationcalc2(lasers, fluors)
 
 %defaultPower = [25 20 5]; % these are the laser powers in mW %Zeiss
 
-exFactor = zeros(1,3); %array creatione
+exFactor = zeros(1,size(fluors,2)); %array creatione
 
 for k = 1:length(lasers) %this loop scales the fit lasers according to their selected power
     scaledlasers(:,k) = lasers(k).fitSpectra.*lasers(k).intensity.*lasers(k).power;
