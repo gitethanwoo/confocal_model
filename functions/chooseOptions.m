@@ -33,7 +33,15 @@ end
 [indx,~] = listdlg('ListString',list, 'Name', 'Fluorophore Selection');
 [indx2,~] = listdlg('ListString',list2, 'Name', 'Filter Selection');
 [indx3,~] = listdlg('ListString',list3, 'Name', 'Laser Selection');
+
+while 1
 [indx4,~] = listdlg('ListString',list4, 'Name', 'Range Selection: Choose a top and bottom value');
+    if indx4 <= 32
+        break
+    end
+    warndlg('Please select 32 channels or less!','Too Many Channels')
+end
+
 
 fluors = fluors(indx);
 filters = filters(indx2);
@@ -49,7 +57,7 @@ dlgtitle = "Input the intensity for the lasers you selected";%just a menu title
 text = string([]); %pre-allocation
 
 for k = 1:length(lasers) %this loop creates the text for the question boxes
-    text(k) = [lasers(k).name  ' Laser Intensity (0.01-1)']; 
+    text(k) = [lasers(k).name  ' Laser Intensity (0-100%)']; 
 end %basically, it uses the lasers you selected to generate questions about those lasers
 
 answer = inputdlg(text, dlgtitle); %this function opens the actual question box
@@ -57,7 +65,7 @@ answer = inputdlg(text, dlgtitle); %this function opens the actual question box
 b = str2double(answer(:)); %this converts the answers into numbers
 
 for k = 1:length(lasers)
-    lasers(k).('intensity') = b(k);
+    lasers(k).('intensity') = b(k)/100;
 end
 
 
