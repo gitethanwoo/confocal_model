@@ -2,8 +2,8 @@ function [realFOMS] = compareFOM()
 %compareFOM This function will import real images that I acquired and unmix
 %them, calculating the FOM
 
-a = FastTiff('assets/546Ecoli.tif');
-b = FastTiff('assets/555Ecoli.tif');
+a = FastTiff('assets/images/546Ecoli.tif');
+b = FastTiff('assets/images/555Ecoli.tif');
 %c = FastTiff('assets/mixedEcoli.tif');
 
 %create reference from each

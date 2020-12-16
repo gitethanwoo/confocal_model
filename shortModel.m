@@ -31,3 +31,4 @@ X = categorical({fluors.name});
 bar(X,FOMS)
 ylabel('FOM')
 title('FOMs of fluorophores in this experiment')
+
