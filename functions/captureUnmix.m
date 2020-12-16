@@ -4,8 +4,10 @@ function FOMS = captureUnmix(fluorStandard, fluorsCombined, fitfilterSpectra, fi
 
 
 B = repmat(fluorsCombined,1, 1000); %this is a step to basically make our combinedFluorophore spectrum into a really big image
-B = imnoise(B*1e-12, 'poisson')*1e12; %this function then applies poisson noise to the entire image
-Bfiltered = B.*fitfilterSpectra.*detector;
+%we also scale it by 100 so our pixel values fall between 0-100, which
+%relates to photons directly
+C = imnoise(B*1e-12, 'poisson')*1e12; %this function then applies poisson noise to the entire image
+Bfiltered = C.*fitfilterSpectra.*detector;
 sampledB = zeros(32, 1000);
 unmixedB = zeros(size(fluorStandard,1), 1000);
 
