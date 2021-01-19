@@ -1,4 +1,4 @@
-function [fluors, filters,lasers, fitRange] = chooseOptions(fluors,filters, lasers)
+function [fluors, filters,lasers, fitRange, photonq, density] = chooseOptions(fluors,filters, lasers)
 %chooseOptions This allows user to select filter, fluors, lasers and laser
 %power
 %   
@@ -31,7 +31,7 @@ end
 
 %these are the dialog boxes where you actually pick what you want
 [indx,~] = listdlg('ListString',list, 'Name', 'Fluorophore Selection');
-[indx2,~] = listdlg('ListString',list2, 'Name', 'Filter Selection');
+[indx2,~] = listdlg('ListString',list2, 'Name', 'Filter Selection', 'SelectionMode', 'single');
 [indx3,~] = listdlg('ListString',list3, 'Name', 'Laser Selection');
 
 while 1
@@ -65,9 +65,29 @@ answer = inputdlg(text, dlgtitle); %this function opens the actual question box
 b = str2double(answer(:)); %this converts the answers into numbers
 
 for k = 1:length(lasers)
-    lasers(k).('intensity') = b(k)/100;
+    lasers(k).('intensity') = b(k)/100; %this stores those intensity values
 end
 
+
+dlgtitle = "Choose your Gain:";
+gain_text = "Gain:";
+gain_answer = inputdlg(gain_text,dlgtitle);
+
+gn = str2double(gain_answer); %gain
+
+%this equation for photon_conversion_value comes from an excel sheet where
+%I found the conversion value from images with different gain
+
+%q is another variable for photon_conversion_value
+
+photonq = 538781*exp(-0.015*gn);
+
+list5 = {'Low Density', 'Medium Density', 'High Density'}
+[p,~] = listdlg('ListString',list5, 'Name', 'How molecularly dense is the model pixel', ...
+    'SelectionMode','single');
+
+photon_vals = [16 127 240];
+density = photon_vals(p);
 
 end
 

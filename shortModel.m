@@ -8,7 +8,7 @@ lasers = importlasers(); %creates the lasers
 
 fluors = importfluors2(); %imports fluorophores
 
-[fluors, dichroics,lasers, fitRange] = chooseOptions(fluors,dichroics, lasers);
+[fluors, dichroics,lasers, fitRange, photonq,density] = chooseOptions(fluors,dichroics, lasers);
 
 %the following function fits all the assets to our domain
 [lasers, dichroics, fluors, detector] = fitassets(fitRange, lasers, fluors, dichroics, detector);
