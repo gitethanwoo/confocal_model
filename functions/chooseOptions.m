@@ -1,4 +1,4 @@
-function [fluors, filters,lasers, fitRange, photonq, density] = chooseOptions(fluors,filters, lasers)
+function [fluors, dichroics,lasers, fitRange, photonq] = chooseOptions(fluors,dichroics, lasers)
 %chooseOptions This allows user to select filter, fluors, lasers and laser
 %power
 %   
@@ -7,7 +7,7 @@ range = readmatrix('assets/range.csv');
 %this imports our microscope wavelength range with real values
 
 list = cell(length(fluors),1); %preallocation
-list2 = cell(length(filters),1); %preallocation
+list2 = cell(length(dichroics),1); %preallocation
 list3 = cell(length(lasers),1); %preallocation
 list4 = cell(length(range),1); %preallocation
 
@@ -17,8 +17,8 @@ for k = 1:length(fluors)
     list{k, 1} = fluors(k).name;
 end
 
-for k = 1:length(filters)
-    list2{k,1} = filters(k).name;
+for k = 1:length(dichroics)
+    list2{k,1} = dichroics(k).name;
 end
 
 for k = 1:length(lasers)
@@ -44,7 +44,7 @@ end
 
 
 fluors = fluors(indx);
-filters = filters(indx2);
+dichroics = dichroics(indx2);
 lasers = lasers(indx3);
 
 a = range(indx4); %this deals with the range selection
@@ -81,13 +81,6 @@ gn = str2double(gain_answer); %gain
 %q is another variable for photon_conversion_value
 
 photonq = 538781*exp(-0.015*gn);
-
-list5 = {'Low Density', 'Medium Density', 'High Density'}
-[p,~] = listdlg('ListString',list5, 'Name', 'How molecularly dense is the model pixel', ...
-    'SelectionMode','single');
-
-photon_vals = [16 127 240];
-density = photon_vals(p);
 
 end
 

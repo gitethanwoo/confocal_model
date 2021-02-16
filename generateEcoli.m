@@ -1,7 +1,7 @@
 %make E.coli
 
-bigpicture = zeros(1200);
-rgbunmixed = zeros(1200,1200,3);
+bigpicture = zeros(1000);
+rgbunmixed = zeros(1000,1000,3);
 
 howmany = 2000;
 
@@ -36,13 +36,13 @@ for i = 1:1:howmany
     
 end
 figure
-imshow(rescale(bigpicture))
-figure
 imshow(rescale(rgbunmixed))
 
 %%
 q = 0.2;
 s = round(rescale(bigpicture,0,255));
+figure
+imshow(photons)
 photons = round(s*q); %this number is found from imageJ
 C = imnoise(photons*1e-12, 'poisson')*1e12; %this function then applies poisson noise to the entire image
 %convert back to grey values
@@ -53,14 +53,8 @@ exposed = greys;
 exposed(exposed>255) = 255;
 
 
-
+figure
 imshow(rescale(exposed))
-
-% h = fspecial('average', [3 3]);
-% e = filter2(h, exposed);
-% 
-% figure
-% %imshow(rescale(e))
 
 
 

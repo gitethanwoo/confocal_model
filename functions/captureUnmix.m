@@ -18,7 +18,7 @@ for k = 1:size(B,2) %this iterates through our Large matrix of the noisy, combin
         i = i + 1;
     end
     i = 1;
-    unmixedB(:,k) = lsqnonneg(fluorStandard', sampledB(:,k)); %this unmixes every thing
+    unmixedB(:,k) = lsqnonneg(double(fluorStandard)', sampledB(:,k)); %this unmixes every thing
 end
 
 FOMS = 1 - abs(1-mean(unmixedB,2));

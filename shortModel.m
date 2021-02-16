@@ -1,5 +1,8 @@
 %short model
 
+oldpath = path;
+path(genpath('hello-world'),oldpath)
+
 detector = importdetector(); %imports detector
 
 dichroics = importdichroics(); %import dichroic spectra into matrix
@@ -8,7 +11,7 @@ lasers = importlasers(); %creates the lasers
 
 fluors = importfluors2(); %imports fluorophores
 
-[fluors, dichroics,lasers, fitRange, photonq,density] = chooseOptions(fluors,dichroics, lasers);
+[fluors, dichroics,lasers, fitRange, photonq] = chooseOptions(fluors,dichroics, lasers);
 
 %the following function fits all the assets to our domain
 [lasers, dichroics, fluors, detector] = fitassets(fitRange, lasers, fluors, dichroics, detector);
@@ -19,12 +22,12 @@ fluors = importfluors2(); %imports fluorophores
 
 %the following function will use the fluorophore spectra and laser
 %information to capture images of our fluorophore standards.
-[fluors, fluorStandard, channelVal, fluorsCombined] = capturestandards(fluors, dichroics.fitSpectra, fitRange, scaledBright, detector);
-
-%This function uses our fluor standards (pure fluors), our combined fluors
+[fluors, fluorStandard, fluorsCombined] = capturestandards(fluors, dichroics.fitSpectra, fitRange, scaledBright, detector);
+   bo 
+%This function uses our fluor st;andards (pure fluors), our combined fluors
 %(which is what the microscope sees on a slide), and the dichroic spectra.
 %it then "captures" an image and unmixes it against our standards
-FOMS = captureUnmix(fluorStandard, fluorsCombined, dichroics.fitSpectra, fitRange, detector);
+FOMS = captureUnmix2(fluorStandard, fluorsCombined, dichroics.fitSpectra, fitRange, detector);
 
 %the following lines just plot the FOM in a bar graph
 X = categorical({fluors.name});
@@ -39,3 +42,5 @@ fluormsg = ['Fluors Selected: ' {fluors.name}];
 
 
 f = msgbox([rngmsg dichroicmsg lasermsg fluormsg] , 'Summary:');
+
+
