@@ -1,6 +1,12 @@
-for p = 1:24
-a = FastTiff('assets/images/546_650gain.tif');
-a = a(:,:,p);
+
+a = FastTiff('assets/images/gainExperiment/Woo_alexa546_550gain.tif');
+for i =  1:1:size(a,3)
+   channelsum(i) = sum(a(:,:,i),'all');
+end
+
+[val, idx] = max(channelsum);
+
+a = a(:,:,idx);
 
 sample = a;
 
@@ -44,33 +50,33 @@ for i = 1:1:4
     end
 end
 
-x = meanI(:);
-y = cell2mat(fftiles(:));
-format long
-b1 = x\y;
+% x = meanI(:);
+% y = cell2mat(fftiles(:));
+% format long
+% b1 = x\y;
+% 
+% yCalc1 = b1*x;
+% scatter(x,y)
+% hold on
+% plot(x,yCalc1)
+% xlabel('Mean Intensities')
+% ylabel('Variances')
+% title('Linear Regression Relation Between variance and mean intensity')
+% grid on
+% %%
+% X = [ones(length(x),1) x];
+% b = X\y;
+% 
+% 
+% 
+% 
+% yCalc2 = X*b;
+% plot(x,yCalc2,'--')
+% legend('Data','Slope','Slope & Intercept','Location','best');
 
-yCalc1 = b1*x;
-scatter(x,y)
-hold on
-plot(x,yCalc1)
-xlabel('Mean Intensities')
-ylabel('Variances')
-title('Linear Regression Relation Between variance and mean intensity')
-grid on
 %%
-X = [ones(length(x),1) x];
-b = X\y;
-
-
-
-
-yCalc2 = X*b;
-plot(x,yCalc2,'--')
-legend('Data','Slope','Slope & Intercept','Location','best');
-
-%%
-hold off
-varOffset = b(1)
+% hold off
+varOffset = b(1);
 
 %now the whole input image
 
@@ -93,7 +99,7 @@ inversedsample = abs(ifft2(maskedsamplefft));
 %previously had done
 %figure
 %imagesc(inversedsample)
-title("scaled image")
+%title("scaled image")
 % figure
 % imshow(inversedsample)
 % title('imshow of inversed sample')
@@ -107,8 +113,7 @@ T = length(values);
 
 calc2 = mean(sample,'all');
 
-g(p) = (calc1 - varOffset)/(calc2)
+g = (calc1 - varOffset)/(calc2)
 
-end
 
 %S = g*n

@@ -1,4 +1,4 @@
-function [scaledBright] = excitationcalc2(lasers, fluors)
+function [exFactor, fluors] = excitationcalc2(lasers, fluors)
 %excitationcalc2 uses lasers and laser power to calculate the relative
 %brightness of the fluorophores
 
@@ -28,12 +28,11 @@ end
 %excitation factor according to fluorophore properties of EC and QY
 
 %Each fluorophore is stored relative to one another, not absolute values
-scaledBright = exFactor/(max(exFactor)); % the excitation factor is stored as single, relative values
+%scaledBright = exFactor/(max(exFactor)); % the excitation factor is stored as single, relative values
 
 %the overall brightness of each emitting fluor is a result of three things:
 %the power of the incident laser, the overlap of the laser, and the quantum
-%efficiency of the actual fluorophore. scaledexFactors stores the factors
-%by which the fluorophores are excited by all the lasers
+%efficiency of the actual fluorophore.
 
 %So total emission relative brightness is the laser power (0-100%)*power of
 %the laser (5-25mW) * the EC of the fluorophore * QY of the fluor * overlap

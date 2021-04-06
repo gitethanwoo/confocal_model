@@ -1,4 +1,4 @@
-function [fluors, dichroics,lasers, fitRange, photonq] = chooseOptions(fluors,dichroics, lasers)
+function [fluors, dichroics,lasers, fitRange, photonCF] = chooseOptions(fluors,dichroics, lasers)
 %chooseOptions This allows user to select filter, fluors, lasers and laser
 %power
 %   
@@ -31,20 +31,34 @@ end
 
 %these are the dialog boxes where you actually pick what you want
 [indx,~] = listdlg('ListString',list, 'Name', 'Fluorophore Selection');
-[indx2,~] = listdlg('ListString',list2, 'Name', 'Filter Selection', 'SelectionMode', 'single');
+[indx2,~] = listdlg('ListString',list2, 'Name', 'Dichroic Selection', 'SelectionMode', 'single');
 [indx3,~] = listdlg('ListString',list3, 'Name', 'Laser Selection');
 
 while 1
 [indx4,~] = listdlg('ListString',list4, 'Name', 'Range Selection: Choose a top and bottom value');
-    if indx4 <= 32
+    if size(indx4,2) < 34
         break
     end
     warndlg('Please select 32 channels or less!','Too Many Channels')
 end
 
 
+answer = questdlg('Do you want to include -405 dichroic?', ...
+	'InVis Dichroic Selection', ...
+	'Yes - include the -405 Dichroic','No.', 'No.');
+% Handle response
+switch answer
+    case 'Yes - include the -405 Dichroic'
+        disp(['-405 Included.'])
+        invis = 1;
+    case 'No.'
+        disp(['-405 Not Included.'])
+        invis = '';
+end
+
+
 fluors = fluors(indx);
-dichroics = dichroics(indx2);
+dichroics = dichroics([indx2 invis]);
 lasers = lasers(indx3);
 
 a = range(indx4); %this deals with the range selection
@@ -80,7 +94,8 @@ gn = str2double(gain_answer); %gain
 
 %q is another variable for photon_conversion_value
 
-photonq = 538781*exp(-0.015*gn);
+photonCF = 5.654E-4*exp(1.215E-2*gn);
+
 
 end
 

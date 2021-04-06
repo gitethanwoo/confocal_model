@@ -2,7 +2,7 @@
 
 function [refSpectra] = extractRef(pureFluorTiff)
 
-[maxMean, I] = max(mean(pureFluorTiff,[1 2])); %Which slice has highest mean 
+[maxMean, I] = max(sum(pureFluorTiff,[1 2])); %Which slice has highest mean 
 %intensity? take the mean of all, then return index of highest in I
 
 fluorDouble = im2double(pureFluorTiff(:,:,I)); %covert tiff to double
